@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% block title %}博客首页{% endblock title %}
+
+{% block topfile %}
+    {{ super() }}
+
+    <style>
+        .article-list nav ul li:hover {
+            background: white;
+            border-radius: 10px 10px 10px 10px;
+        }
+    </style>
+
+
+{% endblock topfile %}
+
+{% block saying %}
+    <div class="wow pulse bg-yellow" data-wow-delay="0.1s">人生，</div>
+    <div class="wow rollIn bg-red" data-wow-iteration="1" data-wow-duration="0.5s">就像一盒巧克力，</div>
+    <div class="wow bounceInRight bg-blue">你永远不知道下一块会是什么味道！</div>
+    <div class="wow bounceInRight bg-blue">---《阿甘正传》</div>
+{% endblock saying %}
+
+{% block content %}
+    <div class="article-list">
+        {% for article in articles.items %}
+            <div class="item">
+                <div class="art-img">
+                    <img src="../../static/images/20180520183306_16377.jpg"/>
+                </div>
+                <div class="title">
+                    <a href="{{url_for('article.detail')}}?aid={{ article.id }}" style="text-decoration: none">{{ article.title }}</a>
+                </div>
+                <div class="base-info">
+                    <ul>
+                        <li>
+                            <img src="{% if article.user.icon %} {{ url_for('static',filename=article.user.icon) }} {% else %} {{ url_for('static',filename='/images/touxiang1.jpg') }} {% endif %}"
+                                 class="xwcms2"/>
+                        </li>
+                        <li>
+                            <a href="#"
+                               style="text-decoration: none">{{ article.user.username }}</a>
+                        </li>
+                        <li>
+                            发布时间： {{ article.adatetime }}
+                        </li>
+                    </ul>
+                </div>
+	
+		<a href="{{url_for('article.detail')}}?aid={{ article.id }}" style="text-decoration: none">
+
+		<div class="desc">
+                    {{ article.content | cdecode | safe }}
+		</div></a>
+
+                <div style="margin-top: 20px;margin-left: 500px; padding-top: 145px">
+                    <span>阅读量:{{ article.click_num }}</span> &nbsp;<span>收藏量:{{ article.save_num }}</span> &nbsp;
+                    <span>点赞量:{{ article.love_num }}</span>
+                </div>
+            </div>
+        {% endfor %}
+
+{#         分页#}
+        <nav aria-label="...">
+            <ul class="pager" style="background-color: white">
+
+                {% if articles.has_prev %}
+                    <li class="previous"><a href="{{ url_for('article.article_type') }}?page={{ articles.prev_num }}&aid={{ type.id }}" style="color: black;padding: 0 9px"><span
+                            aria-hidden="true">&larr;</span> Older</a></li>
+                {% else %}
+                    <li class="previous"><a href="" style="color: black;padding: 0 9px;pointer-events: none;"><span
+                            aria-hidden="true">&larr;</span> Older</a></li>
+                {% endif %}
+
+
+                {% if articles.has_next %}
+                    <li class="next" style="margin-left: 500px"><a href="{{ url_for('article.article_type') }}?page={{ articles.next_num }}&aid={{ type.id }}" style="color: black;padding: 0 9px">Newer
+                        <span aria-hidden="true">&rarr;</span></a></li>
+                {% else %}
+                    <li class="next" style="margin-left: 500px"><a href="{{ url_for('article.article_type') }}" style="color: black;padding: 0 9px;pointer-events: none;">Newer
+                        <span aria-hidden="true">&rarr;</span></a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+{% endblock content %}

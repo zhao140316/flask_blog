@@ -1,0 +1,192 @@
+{% extends 'base.html' %}
+{% block title %}文章{% endblock title %}
+{% block topfile %}
+    {{ super() }}
+    <style>
+        #left {
+            float: left;
+            margin-left: 10px;
+        }
+
+        #right {
+            float: right;
+            margin-right: 10px;
+        }
+
+        #content {
+            margin-top: 50px;
+            width: 950px;
+            height: 300px;
+            margin-left: 25px;
+            font-size: 18px;
+            line-height: 40px;
+            text-indent: 35px;
+        }
+
+        #comments_title {
+            height: 300px;
+            width: 950px;
+            margin-left: 10px;
+        }
+
+        #comment nav ul li:hover {
+            background: white;
+            border-radius: 10px 10px 10px 10px;
+        }
+
+    </style>
+{% endblock topfile %}
+
+
+{% block saying %}
+    <div class="wow pulse bg-yellow" data-wow-delay="0.1s">我们来过，</div>
+    <div class="wow rollIn bg-red" data-wow-iteration="1" data-wow-duration="0.5s">就该留下一些什么，</div>
+    <div class="wow bounceInRight bg-blue">让这短暂而渺小的一生对得起自己的内心。</div>
+    <div class="wow bounceInRight bg-blue"></div>
+{% endblock saying %}
+{% block banner %}{% endblock banner %}
+{% block right %}{% endblock right %}
+{% block content %}
+    <div>
+
+        <h2 style="text-align: center">{{ article.title }}</h2>
+        <div id="left">
+            <span>作者:{{ article.user.username }}</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <span>发布时间:{{ article.adatetime }}</span>
+        </div>
+
+        <div id="right">
+            <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true" style="cursor: pointer"></span>&nbsp;&nbsp;
+            <span tag="0">{{ article.love_num }}</span>&nbsp;&nbsp;&nbsp;&nbsp;
+            <span class="glyphicon glyphicon-heart"
+                  aria-hidden="true" style="cursor: pointer"></span>&nbsp;&nbsp;<span
+                tag="0">{{ article.save_num }}</span>
+        </div>
+    </div>
+
+    <div id="content">
+        {{ article.content | adecode | safe }}
+    </div>
+
+    <div id="comments_title" style="height: 210px">
+        <h4>文章评论</h4>
+        <form action="{{ url_for('article.comment') }}" method="post">
+            <input type="hidden" value="{{ article.id }}" name="aid"> {# 为了给后台一个文章的id，也可以在路由中携带这个文章id #}
+            <p>
+                <textarea class="mytextarea" name="comment" style="width: 550px; height: 120px">抓紧发表你的意见吧！</textarea>
+            </p>
+            <div>
+                <input type="submit" value="评论" class="btn btn-info" name="comment">
+            </div>
+        </form>
+    </div>
+
+    <div id="comment">
+        {% if comments.items %}
+            {% for comment in comments.items %}
+                <div style="height: 80px;border-bottom: 1px solid #DEE1E6;margin-top: 20px">
+                    <div style="float:left;">
+                        <img src="{% if comment.user.icon %} {{ url_for('static', filename=comment.user.icon) }} {% else %} {{ url_for('static', filename='images/touxiang1.jpg') }} {% endif %}"
+                             alt="" width="50px" height="50px" style="margin-left: 70px;border-radius: 50%">
+                    </div>
+                    <div style="margin-left: 150px">
+                        <p>
+                            <span>{{ comment.user.username }}</span>
+                            <span>{{ comment.cDatetime }}</span>
+                        </p>
+                        <p>
+                            {{ comment.comment }}
+                        </p>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            当前文章还没有任何评论，赶快发表你的意见吧！
+        {% endif %}
+
+        <nav aria-label="...">
+            <ul class="pager" style="background-color: white">
+
+                {% if comments.has_prev %}
+                    <li class="previous"><a href="{{ url_for('article.detail') }}?page={{ comments.prev_num }}&aid={{ article.id }}"
+                                            style="color: black;padding: 0 9px;margin-left: 17px"><span
+                            aria-hidden="true">&larr;</span> Older</a></li>
+                {% else %}
+                    <li class="previous"><a href="{{ url_for('article.detail') }}"
+                                            style="color: black;padding: 0 9px;pointer-events: none;margin-left: 17px"><span
+                            aria-hidden="true">&larr;</span> Older</a></li>
+                {% endif %}
+
+
+                {% if comments.has_next %}
+                    <li class="next" style="margin-left: 770px"><a
+                            href="{{ url_for('article.detail') }}?page={{ comments.next_num }}&aid={{ article.id }}"
+                            style="color: black;padding: 0 9px">Newer
+                        <span aria-hidden="true">&rarr;</span></a></li>
+                {% else %}
+                    <li class="next" style="margin-left: 770px"><a href="{{ url_for('article.detail') }}"
+                                                                   style="color: black;padding: 0 9px;pointer-events: none;">Newer
+                        <span aria-hidden="true">&rarr;</span></a></li>
+                {% endif %}
+            </ul>
+        </nav>
+
+    </div>
+
+{% endblock content %}
+
+{% block bottomfile %}
+    {{ super() }}
+
+    <script>
+        $(function () {
+            // 点赞
+            $('.glyphicon-thumbs-up').click(function () {
+                $this = $(this)
+                tag = $this.next('span').attr('tag')
+                // 发送ajax get
+                $.get('{{ url_for('article.love') }}', {aid: {{article.id}}, tag: tag}, function (data) {
+                    $this.next('span').text(data.num)
+                })
+                if (tag == 1) {
+                    $this.css({'color': 'black'});
+                    $this.next('span').attr('tag', '0')
+                }
+                else {
+                    $this.css({'color': 'red'});
+                    $this.next('span').attr('tag', '1')
+                }
+
+
+            })
+
+            // 收藏
+            $('.glyphicon-heart').click(function () {
+                $this = $(this)
+                tag = $this.next('span').attr('tag')
+                // 发送ajax get
+                $.get('{{ url_for('article.save') }}', {aid: {{article.id}}, tag: tag}, function (data) {
+                    $this.next('span').text(data.num)
+                })
+                if (tag == 1) {
+                    $this.css({'color': 'black'});
+                    $this.next('span').attr('tag', '0')
+                }
+                else {
+                    $this.css({'color': 'red'});
+                    $this.next('span').attr('tag', '1')
+                }
+
+
+            })
+
+            // 文本域 鼠标点击时自动清空
+            $('textarea[name="comment"]').focus(function () {
+                $(this).val('')
+            })
+
+        })
+
+
+    </script>
+{% endblock bottomfile %}

@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block saying %}
+    <div class="wow pulse bg-yellow" data-wow-delay="0.1s">人生，</div>
+    <div class="wow rollIn bg-red" data-wow-iteration="1" data-wow-duration="0.5s">就像一盒巧克力，</div>
+    <div class="wow bounceInRight bg-blue">你永远不知道下一块会是什么味道！</div>
+    <div class="wow bounceInRight bg-blue">---《阿甘正传》</div>
+{% endblock saying %}
+
+{% block banner %}{% endblock banner %}
+{% block right %}{% endblock right %}
+
+{% block content %}
+    <div id="right_content1" class="right1" style="padding-top: 20px; width: 80%;margin-left: 110px">
+        <form action="{{ url_for('user.about') }}" method="post">
+            <p>
+                        <textarea class="mytextarea" name="content"
+                                  style="width: 800px; height: 380px">添加你的信息吧!</textarea>
+            </p>
+            <p></p>
+            <div class="form-group">
+                <div class="col-sm-offset-6 clo-sm-6">
+                    <input type="submit" id="about" class="btn btn-info" value="保存">
+                </div>
+            </div>
+        </form>
+    </div>
+
+{% endblock content %}
+
+{% block bottomfile %}
+    {{ super() }}
+
+    <script>
+        $(function () {
+            // 文本域 鼠标点击时自动清空
+            $('textarea[name="content"]').focus(function () {
+                $(this).val('')
+            })
+
+        })
+
+
+    </script>
+{% endblock bottomfile %}
+
+

@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% block topfile %}
+    {{ super() }}
+    <style>
+        #container {
+            width: 1200px;
+            margin: 0 auto;
+        }
+
+        #container p {
+            width: 80%;
+            margin-left: 20px;
+        }
+
+    </style>
+
+{% endblock topfile %}
+
+{% block saying %}
+    <div class="wow pulse bg-yellow" data-wow-delay="0.1s">你会如何过余生，</div>
+    <div class="wow rollIn bg-red" data-wow-iteration="1" data-wow-duration="0.5s">是混沌或虔诚，&nbsp;&nbsp;&nbsp;</div>
+    <div class="wow bounceInRight bg-blue">为谁展露天真！&nbsp;&nbsp;&nbsp;</div>
+    <div class="wow bounceInRight bg-blue">&nbsp;&nbsp;---《九月清晨》</div>
+{% endblock saying %}
+
+{% block banner %}{% endblock banner %}
+{% block right %}{% endblock right %}
+
+{% block content %}
+    <div id="container">
+        {% if not user.aboutme %}
+            <p>
+                还没有添加个人信息哦，赶快去<a href="{{ url_for('user.center') }}" style="text-decoration: none">个人中心</a>添加吧。
+            </p>
+        {% else %}
+            <p>
+                {{ user.aboutme[0].content | adecode | safe }}
+            </p>
+        {% endif %}
+    </div>
+
+
+
+
+{% endblock content %}

@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% block title %}{% endblock title %}
+{% block topfile %}
+    {{ super() }}
+    <style>
+        #container {
+            width: 250px;
+            margin: 60px 405px
+        }
+
+        #photo{
+             margin-top: 20px;
+            margin-left: -35px;
+        }
+
+    #photo nav ul li:hover {
+            background: white;
+            border-radius: 10px 10px 10px 10px;
+        }
+    </style>
+{% endblock topfile %}
+{% block saying %}
+    <div class="wow pulse bg-yellow" data-wow-delay="0.1s">人生，</div>
+    <div class="wow rollIn bg-red" data-wow-iteration="1" data-wow-duration="0.5s">就像一盒巧克力，</div>
+    <div class="wow bounceInRight bg-blue">你永远不知道下一块会是什么味道！</div>
+    <div class="wow bounceInRight bg-blue">---《阿甘正传》</div>
+{% endblock saying %}
+{% block banner %}{% endblock banner %}
+{% block right %}{% endblock right %}
+{% block content %}
+
+    {% if photos.items %}
+        <div id="photo">
+            {% for photo in photos.items %}
+                <div id="container">
+                    <span><img src="http://qe5r0ibq8.bkt.clouddn.com/{{ photo.pname }}" alt="" width=250px
+                               height="250px"></span>
+                </div>
+            {% endfor %}
+
+            <nav aria-label="...">
+                <ul class="pager" style="background-color: white">
+
+                    {% if photos.has_prev %}
+                        <li class="previous" style="margin-left: 30px"><a href="{{ url_for('user.myphoto') }}?page={{ photos.prev_num }}" style="color: black;padding: 0 9px"><span aria-hidden="true">&larr;</span> Older</a>
+                        </li>
+                    {% else %}
+                        <li class="previous" style="margin-left: 30px"><a href="{{ url_for('user.index') }}" style="color: black;padding: 0 9px;pointer-events: none;"><span aria-hidden="true">&larr;</span> Older</a></li>
+                    {% endif %}
+
+
+                    {% if photos.has_next %}
+                        <li class="next" style="margin-left: 770px"><a href="{{ url_for('user.myphoto') }}?page={{ photos.next_num }}" style="color: black;padding: 0 9px">Newer
+                            <span aria-hidden="true">&rarr;</span></a></li>
+                    {% else %}
+                        <li class="next" style="margin-left: 770px"><a href="" style="color: black;padding: 0 9px;pointer-events: none;">Newer
+                            <span aria-hidden="true">&rarr;</span></a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+
+        </div>
+    {% else %}
+        <div>您的相册还没有内容，请赶快上传吧！</div>
+    {% endif %}
+
+
+
+
+
+{% endblock content %}

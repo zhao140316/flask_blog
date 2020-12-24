@@ -1,0 +1,269 @@
+{% extends 'base.html' %}
+
+{% block topfile %}
+    {{ super() }}
+    {#    <link rel="stylesheet" href="{{ url_for('static', filename='css/center.css') }}">#}
+    <link rel="stylesheet" href="../../static/css/center.css">
+    <script src='../../static/tinymce/tinymce.min.js'></script>
+    <script type="text/javascript" src="../../static/wangEditor.min.js"></script>
+    {#    <script src="{{ url_for('static',filename='js/center.js')}}"></script>#}
+    {#    <script src="../../static/js/center.js"></script>#}
+    
+
+    {#    <style>#}
+    {#        #container {#}
+    {#            padding-top: 25px;#}
+    {#            width: 500px;#}
+    {#            height: 500px;#}
+    {#            margin: 30px auto 0;#}
+    {#        }#}
+    {#    </style>#}
+{% endblock topfile %}
+
+{% block saying %}
+    <div class="wow pulse bg-yellow" data-wow-delay="0.1s">人生，</div>
+    <div class="wow rollIn bg-red" data-wow-iteration="1" data-wow-duration="0.5s">就像一盒巧克力，</div>
+    <div class="wow bounceInRight bg-blue">你永远不知道下一块会是什么味道！</div>
+    <div class="wow bounceInRight bg-blue">---《阿甘正传》</div>
+{% endblock saying %}
+
+{% block banner %}{% endblock banner %}
+
+{% block content %}
+
+    <div id="container">
+        <div id="left">
+		<p style="background-color: #FF9056;" class="left_title1">发表文章</p>
+            <p class="left_title2">管理相册</p>
+            <p class="left_title3">管理留言</p>
+            <p class="left_title4">个人信息</p>
+            <p><a href="{{ url_for('user.about') }}" style="text-decoration: none;color: white">关于我的设置</a></p>
+        </div>
+
+        <div id="right">
+            {# 发表文章 #}
+            <div id="right_content1" class="right1" style="padding-top: 20px;">
+                <form action="{{ url_for('article.publish') }}" method="post">
+                    <p><input type="text" class="form-control" id="inputTitle" name="title" placeholder="请输入文章标题"></p>
+                    <p>
+                        <select name="type" class="form-control">
+                            <option value="0">请选择文章分类</option>
+                            {% for type in types %}
+                                <option value="{{ type.id }}">{{ type.type_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </p>
+                    <p>
+                       <textarea class="mytestarea" name="content"
+                                  style="width: 450px; height: 380px"></textarea>
+				    
+                    </p>
+                    <p></p>
+                    <div class="form-group">
+                        <div class="col-sm-offset-6 clo-sm-6">
+                            <input type="submit" id="phoneLogin" class="btn btn-info" value="保存">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            {# 相册 #}
+            <div id="right_content2" class="right1" style="display: none">
+                <form action="{{ url_for('user.photo') }}" method="post" enctype="multipart/form-data">
+                    <input type="file" name="photo" class="form-control">
+                    <input type="submit" value="上传" class="btn btn-default"
+                           style="margin-left: 310px;margin-top: -34px" name="photo">
+                </form>
+                <p style="color: red">{{ errmsg }}</p>
+
+
+                <div style="width: 500px; margin-top: 20px;margin-left: -35px">
+                    {% for photo in photos %}
+                        <div>
+                        <span><img src="http://qe5r0ibq8.bkt.clouddn.com/{{ photo.pname }}" alt="" width=150px
+                                   height="150px" style="margin-right: 50px; margin-top: 50px;margin-left: 50px"></span>
+                        </div>
+                        <div>
+                            <button class="btn btn-info delete_photo" name="delete"
+                                    style="height:38px;width: 55px;margin-top: 205px;margin-left: -155px"
+                                    tag="{{ photo.id }}">删除
+                            </button>
+                        </div>
+                    {% endfor %}
+
+                </div>
+
+
+            </div>
+            {# 管理留言 #}
+            <div id="right_content3" class="right1" style="padding-top: 30px; display: none;width: 90%;padding-left: 85px">
+
+                <table class="table table-hover">
+                    <tr>
+                        <td>序号</td>
+                        <td>内容</td>
+                        <td>日期</td>
+                        <td>选项</td>
+                    </tr>
+                    {% if user.messages %}
+                        {% for message in user.messages %}
+                        <tr>
+                            <td>{{ loop.index }}</td>
+                            <td>{{ message.content }}</td>
+                            <td>{{ message.mDatetime }}</td>
+                            <td><a href="{{ url_for('user.del_board') }}?bid={{ message.id }}">删除</a></td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        您目前还没有留过言，请先去留言吧！
+                    {% endif %}
+                </table>
+
+
+            </div>
+            {# 个人信息 #}
+            <div id="right_content4" class="right1" style="display: none">
+                <form class="form-horizontal" method="post" action="{{ url_for('user.update') }}" id="user_pwd_login"
+                      enctype="multipart/form-data">
+
+                    <p>
+                    <div style="margin-top:7px;font-size: 16px">用户名</div>
+                    <input type="text" class="form-control" id="inputUsername" placeholder="{{ user.username }}"
+                           name="username" value="{{ user.username }}"
+                           style="width: 80%; height: 40px;margin-left: 60px"></p>
+
+                    <p>
+                    <div style="margin-top: 7px;font-size: 16px">手机号</div>
+                    <input type="text" class="form-control" id="inputPhone" placeholder="{{ user.phone }}"
+                           name="phone" value="{{ user.phone }}" style="width: 80%; height: 40px;margin-left: 60px"></p>
+                    <p>
+                    <div style="margin-top: 7px;font-size: 16px;margin-left: 15px">邮箱</div>
+                    <input type="email" class="form-control" id="inputEmail" placeholder="{{ user.email }}"
+                           name="email" value="{{ user.email }}" style="width: 80%; height: 40px;margin-left: 60px"></p>
+
+                    <div class="col-cm-7">
+                        <div style="margin-left: 15px;font-size: 16px">头像</div>
+                        <input type="file" id="InputFile" name="icon"
+                               style="width: 80%; height: 40px;margin-left: 60px">
+                        <p>
+                            <img src="{% if user.icon %} {{ url_for('static',filename=user.icon) }} {% else %} {{ url_for('static',filename='/images/touxiang1.jpg') }} {% endif %}"
+                                 alt="" width="100" height="100"
+                                 style="margin-top: -6px; margin-left: 40px; margin-bottom: 15px"></p>
+                    </div>
+                    {#                </div>#}
+                    {#            </div>#}
+                    <p></p>
+
+
+                    <div class="form-group" style="margin-left: 108px">
+                        <div class="col-sm-offset-6 clo-sm-6" style="margin-left: 45%">
+                            <input type="submit" id="usernameLogin" class="btn btn-info" value="修改">
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+
+    </div>
+
+
+
+
+{% endblock content %}
+
+{% block right %}{% endblock right %}
+
+{% block bottomfile %}
+    {{ super() }}
+    <script>
+
+        // 手机号验证
+        $('#inputPhone').blur(function () {
+            phone = $(this).val()
+            span_ele = $(this).next('span')
+            if (phone.length == 11) {
+                span_ele.text('')
+                // 发送ajax get 请求，地址 /user/check, 发送参数phone
+                $.get('{{ url_for('user.check') }}', {phone: phone}, function (data) {
+                    if (data.code == 1) {
+                        span_ele.css({"color": "#ff0011", "font-size": "12px"})
+                        span_ele.text(data.errmsg)
+                    }
+
+                })
+            }
+            else {
+                span_ele.css({"color": "#ff0011", "font-size": "12px"})
+                span_ele.text('手机号码不正确')
+            }
+        })
+
+
+        // 用户中心点击显示模块
+        $('.left_title1').click(function () {
+            $(this).css({'background-color': '#FF9056'});
+            $('.left_title2').css({'background-color': '#578A90'});
+            $('.left_title3').css({'background-color': '#578A90'});
+            $('.left_title4').css({'background-color': '#578A90'});
+            $('#right_content1').show();
+            $('#right_content2').hide();
+            $('#right_content3').hide();
+            $('#right_content4').hide()
+        });
+
+        $('.left_title2').click(function () {
+            $(this).css({'background-color': '#FF9056'});
+            $('.left_title1').css({'background-color': '#578A90'});
+            $('.left_title3').css({'background-color': '#578A90'});
+            $('.left_title4').css({'background-color': '#578A90'});
+            $('#right_content1').hide()
+            $('#right_content2').show()
+            $('#right_content3').hide()
+            $('#right_content4').hide()
+        });
+
+        $('.left_title3').click(function () {
+            $(this).css({'background-color': '#FF9056'})
+            $('.left_title2').css({'background-color': '#578A90'});
+            $('.left_title1').css({'background-color': '#578A90'});
+            $('.left_title4').css({'background-color': '#578A90'});
+            $('#right_content1').hide()
+            $('#right_content2').hide()
+            $('#right_content3').show()
+            $('#right_content4').hide()
+        });
+
+        $('.left_title4').click(function () {
+            $(this).css({'background-color': '#FF9056'})
+            $('.left_title2').css({'background-color': '#578A90'});
+            $('.left_title3').css({'background-color': '#578A90'});
+            $('.left_title1').css({'background-color': '#578A90'});
+            $('#right_content1').hide()
+            $('#right_content2').hide()
+            $('#right_content3').hide()
+            $('#right_content4').show()
+        })
+
+
+        // 删除相册照片
+        $('.delete_photo').click(function () {
+            // 点击删除后出现弹框，确认删除
+            flag = confirm('确认删除此图片吗?')
+            if (flag) {
+                pid = $(this).attr('tag')
+                // 1.发送ajax  2.location.href
+                location.href = '{{ url_for('user.delete') }}?pid=' + pid
+            }
+            else {
+            }
+
+        });
+
+        
+				    
+
+    </script>
+
+
+
+{% endblock bottomfile %}

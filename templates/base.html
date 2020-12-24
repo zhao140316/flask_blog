@@ -1,0 +1,257 @@
+﻿<html>
+<head>
+    <title>{% block title %}{% endblock title %}</title>
+    <link rel="shortcut icon" href="../static/images/ico.jpg"/>
+    <link href="../static/css/style.css?v=2" rel="stylesheet" type="text/css" media="all">
+    <link rel="stylesheet" href="../static/css/animate.min.css">
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <!-- 可选的 Bootstrap 主题文件（一般不用引入） -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap-theme.min.css"
+          integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+    <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js"
+            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+            crossorigin="anonymous"></script>
+
+    <style>
+        .dropdown ul li a:hover {
+            background: #FF7256;
+            border-radius: 10px 10px 10px 10px;
+        }
+        nav ul li
+
+    </style>
+
+    {% block topfile %}
+        <script src="../static/js/wow.min.js"></script>
+        <script>
+            if (!(/msie [6|7|8|9]/i.test(navigator.userAgent))) {
+                new WOW().init();
+            }
+            ;
+        </script>
+    {% endblock topfile %}
+</head>
+<body>
+
+<header>
+    <div class="logo">
+        <img src="{% if user and user.icon != None %} {{ url_for('static',filename=user.icon) }} {% else %} {{ url_for('static', filename='images/touxiang1.jpg') }} {% endif %}" class="xwcms" onmouseover="this.src='{% if user and user.icon != None %} {{ url_for('static',filename=user.icon) }} {% else %} {{ url_for('static', filename='images/touxiang1.jpg') }} {% endif %}'"
+             onmouseout="this.src='{% if user and user.icon != None %} {{ url_for('static',filename=user.icon) }} {% else %} {{ url_for('static', filename='images/touxiang1.jpg') }} {% endif %}'"/>
+	{% block logo %}<div class="logo-text">{% if user %}{{ user.username }} {% else %}melo{% endif %}<span style="color:#FF6347;font-size:1.4em;">'S</span> 博客</div>{% endblock logo %}
+    </div>
+    <div class="right-block">
+        {% block saying %}
+        {% endblock saying %}
+    </div>
+
+</header>
+
+{% block header %}
+    <div class="clear">
+    </div>
+    <nav id="nav" class="nav-wrap">
+        <ul class="clearfix">
+            <li class="menuactive" id="index">
+                <a href="{{ url_for('user.index') }}" style="text-decoration: none;">
+                    首页
+                </a>
+            </li>
+
+            <li id="about" >
+                <a href="{{ url_for('user.show_about_me') }}"  style="text-decoration: none;">
+                    关于我
+                </a>
+            </li>
+
+            <li id="myphoto">
+                <a href="{{ url_for('user.myphoto') }}" style="text-decoration: none;">
+                    我的相册
+                </a>
+            </li>
+
+            <li id="navEnd">
+                <a href="{{ url_for('user.message') }}" style="text-decoration: none;">
+                    留言板
+                </a>
+            </li>
+
+            <li class="dropdown" id="type">
+                <a href="#" data-toggle="dropdown" role="button" aria-haspopup="true"
+                   aria-expanded="false" style="text-decoration: none;">文章分类<span class="caret"></span></a>
+                <ul class="dropdown-menu" style="min-width: 1px">
+                    {% for type in types %}
+                        <li><a href="{{ url_for('article.article_type') }}?aid={{ type.id }}" style="color: black; padding: 13px 20px" id="{{ type.type_name }}">{{type.type_name}}</a></li>
+                    {% endfor %}
+                </ul>
+            </li>
+
+
+
+            {% if user %}
+
+                <li class="dropdown" style="float: right;">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                       aria-expanded="false" style="text-decoration: none;">欢迎!&nbsp;{{ user.username }} <span class="caret"></span></a>
+                    <ul class="dropdown-menu" style="min-width: 1px;width: 100px">
+                        <li style="height: 25px;width: 98px"><a href="{{url_for('user.center')}}" style="color: black; padding: 5px 23px">用户中心</a></li>
+                        <li role="separator" class="divider" style="height: 1px;width: 90px"></li>
+                        <li style="height: 25px;width: 98px"><a href="{{ url_for('user.logout') }}" style="color: black; padding: 0px 33px">退出</a></li>
+                    </ul>
+                </li>
+
+                <img src="{% if user.icon %} {{ url_for('static', filename=user.icon) }} {% else %} {{ url_for('static', filename='images/touxiang1.jpg') }} {% endif %}" alt="" width="30" height="30" style="float: right; border-radius: 50%; margin-top: 7px;margin-right: 2px">
+
+
+
+
+            {% else %}
+                <li style="float:right;">
+                    <a href="{{ url_for('user.register') }}" style="text-decoration: none;">
+                        注册
+                    </a>
+                </li>
+
+                <li style="float: right;">
+                    <a href="{{ url_for('user.login') }}" style="text-decoration: none;">
+                        登录
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+{% endblock header %}
+
+
+
+{% block banner %}
+    <section class="banner">
+        <div class="youtiy_slider">
+            <div class="bd">
+                <ul>
+                    <li><a target="_blank" href="#"><img
+                            src="../static/plugin/SuperSlide/images/1.jpg"/></a></li>
+                    <li><a target="_blank" href="#"><img
+                            src="../static/plugin/SuperSlide/images/2.jpg"/></a></li>
+                    <li><a target="_blank" href="#"><img
+                            src="../static/plugin/SuperSlide/images/3.jpg"/></a></li>
+                </ul>
+            </div>
+            <div class="hd">
+                <ul>
+                </ul>
+            </div>
+            <div class="pnBtn prev"><span class="blackBg"></span> <a class="arrow" href="javascript:void(0)"></a></div>
+            <div class="pnBtn next"><span class="blackBg"></span> <a class="arrow" href="javascript:void(0)"></a></div>
+        </div>
+    </section>
+{% endblock banner %}
+
+<section class="container-content">
+{% block content %}
+
+{% endblock content %}
+
+{% block right %}
+    <div class="right-fun">
+        <div class="model">
+            <div class="title">站内搜索</div>
+            <div class="content">
+                <div class="bar7">
+                    <form action="{{ url_for('user.search') }}" method="get">
+                        <input type="text" placeholder="请输入关键词" name="keyword">
+                        <button type="submit"></button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="model">
+            <div class="title">快捷菜单</div>
+            <div class="menu">
+                <span><a href="{{url_for('user.center')}}">发表文章</a></span> <span><a
+			 href="#">联系我吧</a></span> <span><a href="{{url_for('user.show_about_me')}}">关于我呀</a></span>
+                <span><a href="{{ url_for('user.message') }}">给我留言</a></span>
+            </div>
+        </div>
+
+        <div class="model recommend">
+            <div class="title">热门推荐</div>
+            <div class="content">
+                {% for article in love_articles %}
+                <p>
+                    <a href="{{url_for('article.detail')}}?aid={{ article.id }}" style="text-decoration: none">{{ article.title }}</a>
+                </p>
+                {% endfor %}
+
+            </div>
+        </div>
+    </div>
+    </section>
+
+    <div class="clear">
+    </div>
+{% endblock right %}
+
+{% block footer %}
+<footer class="footer">
+    <div class="footer_content">
+	    <h2>{% if user %}{{ user.username }} {% else %} melo {% endif %} <span style="color:#FF6347;">'S</span> 博客</h2>
+        <p>© 2013－2020 zxl.com, all rights reserved</p>
+    </div>
+</footer>
+{% endblock footer %}
+
+{% block bottomfile %}
+    <script src="../static/plugin/SuperSlide/js/jquery.min.js"></script>
+    <!-- <script src="js/jquery-1.12.4.min.js"></script> -->
+    <script src="../static/plugin/SuperSlide/js/superslide.2.1.js"></script>
+    <script type="text/javascript">
+        jQuery(".youtiy_slider .bd li").first().before(jQuery(".youtiy_slider .bd li").last());
+        jQuery(".youtiy_slider").hover(function () {
+            jQuery(this).find(".arrow").stop(true, true).fadeIn(300)
+        }, function () {
+            jQuery(this).find(".arrow").fadeOut(300)
+        });
+        jQuery(".youtiy_slider").slide(
+            {
+                titCell: ".hd ul",
+                mainCell: ".bd ul",
+                effect: "leftLoop",
+                autoPlay: true,
+                vis: 3,
+                autoPage: true,
+                trigger: "mouseover"
+            }
+        );
+
+
+        $(document).ready(function (e) {
+            var offset = 890;
+            $(window).on('scroll', function () {
+                if ($(this).scrollTop() > offset) {
+                    $('.recommend').css('position', 'fixed');
+                    $('.recommend').css('top', '0px');
+                }
+                else {
+                    $('.recommend').css('position', '');
+                }
+            });
+        });
+
+
+
+
+
+
+
+
+    </script>
+{% endblock bottomfile %}
+</body>
+</html>
